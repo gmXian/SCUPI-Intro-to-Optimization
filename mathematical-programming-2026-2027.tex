@@ -472,11 +472,11 @@
       \end{equation*}
     \item Global minimum:
       \begin{equation*}
-        f(\bar{\vect{x}})\le f(\vect{x}),\quad\forall\vect{x}\in\Omega.
+         \exists\varepsilon>0,\ \text{such that }f(\bar{\vect{x}})\le f(\vect{x}),\quad\forall\vect{x}\in\Omega.
       \end{equation*}
     \item Strict global minimum:
       \begin{equation*}
-        f(\bar{\vect{x}})<f(\vect{x}),\quad\forall\vect{x}\in\Omega\setminus\{\bar{\vect{x}}\}.
+         \exists\varepsilon>0,\ \text{such that }f(\bar{\vect{x}})<f(\vect{x}),\quad\forall\vect{x}\in\Omega\setminus\{\bar{\vect{x}}\}.
       \end{equation*}
   \end{itemize}
 \end{frame}
@@ -591,8 +591,8 @@
 \begin{frame}{Model Stability}
   \footnotesize
   \begin{itemize}
-    \item Model Stable: small changes in the data $\rightarrow$ small changes in $x_1^*,\ldots,x_n^*$ and $f(x_1^*,\ldots,x_n^*)$
-    \item Model Unstable: small changes in the data $\rightarrow$ LARGE changes in $x_1^*,\ldots,x_n^*$ and $f(x_1^*,\ldots,x_n^*)$
+    \item \textcolor{blue}{Model Stable}: small changes in the data $\rightarrow$ small changes in $x_1^*,\ldots,x_n^*$ and $f(x_1^*,\ldots,x_n^*)$
+    \item \textcolor{red}{Model Unstable}: small changes in the data $\rightarrow$ LARGE changes in $x_1^*,\ldots,x_n^*$ and $f(x_1^*,\ldots,x_n^*)$
     \item Frequently, model-unstable problems possess redundant constraints
       \begin{columns}[T,onlytextwidth]
         \begin{column}{0.47\textwidth}
@@ -666,8 +666,8 @@
       \begin{equation*}
         \vect{y}^{\trans}=[y_1,\ldots,y_n]\in\R^{1\times n}
       \end{equation*}
-    \item Scalars: real/complex numbers
-    \item Vector space ($\R^{m\times1}$): Euclidean $m$-space ($E^m$)
+    \item \textcolor{blue}{Scalars}: real/complex numbers
+    \item \textcolor{blue}{Vector space} ($\R^{m\times1}$): Euclidean $m$-space ($E^m$)
   \end{itemize}
 \end{frame}
 
@@ -712,7 +712,7 @@
 \begin{frame}{A Review of Linear Algebra: Subspace}
   \footnotesize
   \begin{itemize}
-    \item Subspace $S$ of $\R^{n\times1}$: Any nonempty set of vectors, such that $\vect{x},\vect{y}\in S$, $\alpha,\beta\in\R$, and $\alpha\vect{x}+\beta\vect{y}\in S$
+    \item \textcolor{red}{Subspace} $S$ of $\R^{n\times1}$: Any \textcolor{blue}{non}empty set of vectors, such that $\vect{x},\vect{y}\in S$, $\alpha,\beta\in\R$, and $\alpha\vect{x}+\beta\vect{y}\in S$
     \item Linear combination:
       \begin{align*}
         \sum_{i=1}^{k}\alpha_i\vect{x}_i
@@ -771,7 +771,7 @@
     \item If $S=L(B)$, then $B$ spans $S$
     \item[$\diamond$] Any intersection of subspaces of $\R^{n\times1}$ is also a subspace of $\R^{n\times1}$
     \item[$\diamond$] $L(B)$ is the intersection of all subspaces of $\R^{n\times1}$ that contain $B$
-      $\longrightarrow$ $L(B)$ is the ``smallest'' subspace that contains $B$
+      $\longrightarrow$ \textcolor{red}{$L(B)$ is the ``smallest'' subspace that contains $B$}
   \end{itemize}
 \end{frame}
 
@@ -801,7 +801,7 @@
   \begin{itemize}
     \item Definition:
 
-      $B\subseteq\R^{n\times1}$, $B$ is a linearly dependent set of vectors
+      $B\subseteq\R^{n\times1}$, $B$ is a \textcolor{blue}{linearly dependent} set of vectors
       \begin{equation*}
         \Longleftrightarrow
       \end{equation*}
@@ -810,7 +810,7 @@
         \alpha_1\vect{x}_1+\ldots+\alpha_k\vect{x}_k=\vect{0}.
       \end{equation*}
       $\vect{0}$ is the vector having all zero entries, i.e., $\vect{0}=[0,\ldots,0]^{\trans}$
-    \item $B$ is a basis for $S$ if:
+    \item $B$ is a \textcolor{blue}{basis} for $S$ if:
       \begin{enumerate}
         \item $L(B)=S$, i.e., $B$ spans $S$
         \item $B$ is linearly independent
@@ -822,12 +822,12 @@
 \begin{frame}{A Review of Linear Algebra: Subspace}
   \small
   \begin{itemize}
-    \item Theorem 1: Every subspace, $S$ of $\R^{n\times1}$, has a basis. Any two bases of a subspace must contain the same number of elements (Dimension)
-    \item Theorem 2: Every set of vectors that spans a subspace contains a basis for the subspace
-    \item Theorem 3: Any linearly independent subset of a subspace can be extended to a basis for the space
-    \item Theorem 4: If $S$ is a subspace of $\R^{n\times1}$ with $\dim(S)=k$, then any subset of $S$ that contains more than $k$ vectors is a linearly dependent set of vectors
+    \item Theorem 1: Every subspace, $S$ of $\R^{n\times1}$, has a basis. Any two bases of a subspace must contain the same number of elements (\textcolor{blue}{Dimension}).
+    \item Theorem 2: Every set of vectors that spans a subspace contains a basis for the subspace.
+    \item Theorem 3: Any linearly independent subset of a subspace can be extended to a basis for the space.
+    \item Theorem 4: If $S$ is a subspace of $\R^{n\times1}$ with $\dim(S)=k$, then any subset of $S$ that contains more than $k$ vectors is a linearly dependent set of vectors.
       \begin{itemize}
-        \item If $S$ and $T$ are both subspace of $\R^{n\times1}$, and $S\subseteq T$, then $\dim(S)\le\dim(T)$
+        \item If $S$ and $T$ are both subspace of $\R^{n\times1}$, and $S\subseteq T$, then $\dim(S)\le\dim(T)$.
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -854,9 +854,9 @@
 % Source PDF page 046
 \begin{frame}{A Review of Linear Algebra: Subspace}
   \begin{itemize}
-    \item Column space: The space spanned by the columns of $A$, which is a subspace of $\R^{m\times1}$
-    \item Row space: The space spanned by the rows of $A$, which is a subspace of $\R^{n\times1}$
-    \item Rank: The dimension of the column (row) space of $A$ is called the column (row) rank of $A$:
+    \item \textcolor{blue}{Column space}: The space spanned by the columns of $A$, which is a subspace of $\R^{m\times1}$
+    \item \textcolor{blue}{Row space}: The space spanned by the rows of $A$, which is a subspace of $\R^{n\times1}$
+    \item \textcolor{blue}{Rank}: The dimension of the column (row) space of $A$ is called the column (row) rank of $A$:
       \begin{equation*}
         \operatorname{rank}(A)=\operatorname{rank}_{\mathrm{col}}(A)
         =\operatorname{rank}_{\mathrm{row}}(A)
@@ -966,7 +966,7 @@
       \end{equation*}
     \item $AB=BA=I_n$:
 
-      $A$ is nonsingular, $B=A^{-1}$ is the inverse of $A$
+      $A$ is \textcolor{blue}{non}singular, $B=A^{-1}$ is the inverse of $A$
     \item $A$ NOT invertible is singular.
   \end{itemize}
 \end{frame}
@@ -1101,11 +1101,11 @@
 \begin{frame}{A Review of Linear Algebra: Gaussian Elimination}
   \small
   \begin{itemize}
-    \item Gaussian elimination: Applying forward elimination and back substitution together to solve $A\vect{x}=\vect{b}$
+    \item \textcolor{blue}{Gaussian elimination}: Applying forward elimination and back substitution together to solve $A\vect{x}=\vect{b}$
       \begin{itemize}
-        \item Upper triangular matrix: $U$, all zeros below the main diagonal
-        \item Forward elimination: Using elementary row operations on $[A\mid\vect{b}]$ to obtain $[U\mid\bar{\vect{b}}]$
-        \item Back substitution: Substituting $x_m,x_{m-1},\ldots,x_{m-i}$ into the $(m-i-1)$-th equation and solving for $x_{m-i-1}$
+        \item \textcolor{red}{Upper triangular matrix}: $U$, all zeros below the main diagonal
+        \item \textcolor{red}{Forward elimination}: Using elementary row operations on $[A\mid\vect{b}]$ to obtain $[U\mid\bar{\vect{b}}]$
+        \item \textcolor{red}{Back substitution}: Substituting $x_m,x_{m-1},\ldots,x_{m-i}$ into the $(m-i-1)$-th equation and solving for $x_{m-i-1}$
       \end{itemize}
     \item Question: Solve linear system with Gaussian elimination
       \begin{align*}
@@ -1157,11 +1157,11 @@
 % definition; the source's ``one column'' statement was false.
 \begin{frame}{A Review of Linear Algebra: LU-decomposition}
   \begin{itemize}
-    \item Row echelon form: Upper triangular (for square matrix)
+    \item \textcolor{blue}{Row echelon form}: Upper triangular (for square matrix)
       \begin{itemize}
-        \item Pivot: The leftmost nonzero entry of a row
-        \item Pivoting: Elementary row operations to find pivot
-        \item Pivot matrix: Matrix that performs a row interchange; it is a permutation matrix obtained by applying the same interchange to $I_m$
+        \item \textcolor{red}{Pivot}: The leftmost nonzero entry of a row
+        \item \textcolor{red}{Pivoting}: Elementary row operations to find pivot
+        \item \textcolor{red}{Pivot matrix}: Matrix that performs a row interchange; it is a permutation matrix obtained by applying the same interchange to $I_m$
       \end{itemize}
     \item Permutation matrix: the rows of $I_m$ are permuted
   \end{itemize}
@@ -1176,7 +1176,7 @@
         U\vect{x}=(F_kP_k)\cdots(F_1P_1)A\vect{x}
         =(F_kP_k)\cdots(F_1P_1)\vect{b}=\bar{\vect{b}}.
       \end{equation*}
-    \item Collecting the row permutations into a permutation matrix $P$ and the elimination operations into a lower-triangular matrix $L$ gives
+    \item Collecting the row permutations into a permutation matrix $P$ and the elimination operations into a lower-triangular matrix $L=(F_kP_k)^{-1}\cdots(F_1P_1)^{-1}=P_1^{-1}F_1^{-1}\cdots P_k^{-1}F_{k}^{-1}$ gives
       \begin{equation*}
         PA=LU.
       \end{equation*}
