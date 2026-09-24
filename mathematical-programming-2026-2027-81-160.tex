@@ -1,0 +1,1416 @@
+% !TeX encoding = UTF-8
+% !TeX TS-program = latexmk
+\PassOptionsToPackage{cmyk}{xcolor}
+\documentclass[aspectratio=169,hyperref,UTF8,CJK]{beamer}
+
+\makeatletter
+\newcommand{\beamer@scu@fontextend}{%
+  \setsansfont{Latin Modern Sans}%
+  \setmonofont{Latin Modern Mono}%
+}
+\makeatother
+
+\usetheme[
+  ColorDisplay=JXred,
+  BlockDisplay=followtheme,
+  CodeTheme=listing,
+  LanguageMode=en,
+  Miniframes=follow,
+  NavigationTool=1-2-3,
+  FontTheme=Custom,
+  MathFont=LM,
+  BIBMode=none,
+  ContentMuticols=false,
+  Background=SCU-Full
+]{scu}
+
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{mathtools}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{arydshln}   % 提供 \hdashline
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\trans}{\mathsf{T}}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\title[Introduction to Optimization]{Mathematical Programming}
+\subtitle{An Introduction to Optimization (Part 2)}
+\author[Changxi Wang]{Changxi Wang}
+\institute{Sichuan University-Pittsburgh Institute\\Chengdu, China}
+\date{2026--2027 Academic Year}
+
+% Disable the theme's extra subsection-outline pages
+\AtBeginSubsection[]{}
+
+\begin{document}
+
+\setcounter{framenumber}{80}
+% 如果需要标题页，取消下一行的注释
+% \frame{\titlepage}
+
+% ========== 第81页 ==========
+\begin{frame}{Theorem on Bounded Linear Functions}
+\textbf{Theorem} \\
+If linear function \(f(\mathbf{x}) = \mathbf{c}^{T}\mathbf{x}\) is bounded from below/above (i.e., \(f(\mathbf{x})\geq \mu)\) over the convex polyhedron \(F = \{\mathbf{x}: \mathbf{A}\mathbf{x}\leq \mathbf{b}\}\) , then \(f(\mathbf{x})\) obtains a minimum/maximum over \(F\) , which occurs at one of the extreme points of \(F\) \\
+Proof: If \(\mathbf{x}\in F\) , then \(\mathbf{x} = \sum_{i = 1}^{d}\alpha_{i}\mathbf{x}_{i} + \sum_{i = 1}^{\ell}\beta_{i}\mathbf{y}_{i}\) , where \(\alpha_{i}\geq 0\) \(\beta_{i}\geq 0\) \(\sum_{i = 1}^{d}\alpha_{i} = 1\) . Let \(f(\mathbf{x}_{k}) = \min \{f(\mathbf{x}_{1}),\ldots ,f(\mathbf{x}_{d})\}\) \\
+\[
+f(\mathbf{x}) = f\left(\sum_{i = 1}^{d}\alpha_{i}\mathbf{x}_{i} + \sum_{i = 1}^{\ell}\beta_{i}\mathbf{y}_{i}\right) = \sum_{i = 1}^{d}\alpha_{i}f(\mathbf{x}_{i}) + \sum_{i = 1}^{\ell}\beta_{i}f(\mathbf{y}_{i}) \geq \sum_{i = 1}^{d}\alpha_{i}f(\mathbf{x}_{i}) \geq \sum_{i = 1}^{d}\alpha_{i}f(\mathbf{x}_{k}) = f(\mathbf{x}_{k})\sum_{i = 1}^{d}\alpha_{i} = f(\mathbf{x}_{k})
+\]
+\end{frame}
+
+% ========== 第82页 ==========
+\begin{frame}{Quiz: Minimize Linear Function}
+- Minimize \(f(x_1, x_2) = -x_1 + x_2\), subject to the constraints
+\begin{align*}
+-x_1 + 2x_2 & \le 10 \\
+5x_1 + 3x_2 & \le 41 \\
+2x_1 - 3x_2 & \le 8 \\
+x_1 & \ge 0 \\
+x_2 & \ge 0
+\end{align*}
+\end{frame}
+
+% ========== 第83页 ==========
+\begin{frame}{Quiz: Matrix Notation}
+- Minimize \(f(x) = c^T x\), subject to \(Ax \leq b\), \(x \geq 0\) \\
+Note that \(\mathbf{x} = [x_1, x_2]^T\), \(\mathbf{c} = [-1, 1]^T\), \(\mathbf{b} = [10, 41, 8]^T\) \\
+\textit{[此处为线性规划可行域及等值线的几何插图]}
+\end{frame}
+
+% ========== 第84页 ==========
+\begin{frame}{LP Problem: Slack Variables}
+Finding the optimal solution to the LPP \(\longrightarrow\) Finding extreme points of the convex polyhedron of \(F\) \\
+- Change inequality constraints to equality constraints via slack variables
+\begin{align*}
+a_{1,1}x_{1} + \ldots +a_{1,n}x_{n} + x_{n + 1} &= b_{1} \\
+a_{2,1}x_{1} + \ldots +a_{2,n}x_{n} + x_{n + 2} &= b_{2} \\
+\vdots & \vdots \\
+a_{m,1}x_{1} + \ldots +a_{m,n}x_{n} + x_{n + m} &= b_{m}
+\end{align*}
+where \(x_{i} \geq 0, \forall i \in \{1, 2, \ldots , n + m\}\)
+\end{frame}
+
+% ========== 第85页 ==========
+\begin{frame}{LP Problem: Standard Form}
+1. \(\min \hat{c}^{T}\hat{x}\) , \(\hat{A}\hat{x} = \mathbf{b}\) , \(\hat{x}\geq 0\) , where \(\hat{c} = [c_{1},\ldots ,c_{n},0,\ldots ,0]^{T}\) \\
+2. Feasible set: \(\hat{F} = \left\{\hat{x}\in \mathbf{R}_{(n + m)\times 1}:\hat{A}\hat{x} = \mathbf{b},\hat{x}\geq 0\right\}\) \\
+3. Coefficient matrix 
+\[
+\hat{A} = \begin{bmatrix} a_{1,1} & \ldots & a_{1,n} & 1 & 0 & \ldots & 0\\ a_{2,1} & \ldots & a_{2,n} & 0 & 1 & \ldots & 0\\ \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\ a_{m,1} & \ldots & a_{m,n} & 0 & 0 & \ldots & 1 \end{bmatrix} = \left[ \mathbf{A}|\mathbf{I}_{m} \right]
+\]
+\end{frame}
+
+% ========== 第86页 ==========
+\begin{frame}{Mapping between F and F̂}
+- Define a function \(\sigma : F \to \hat{F}\), i.e.,
+\[
+\sigma(\mathbf{x}) = \hat{\mathbf{x}} = \begin{bmatrix} \mathbf{x} \\ \mathbf{b} - \mathbf{A}\mathbf{x} \end{bmatrix}
+\]
+- Proposition 8: \(\sigma(\cdot)\) is a one-to-one mapping that preserves convex combinations of vectors, i.e.,
+\[
+\sigma(\alpha x + (1 - \alpha)y) = \alpha\sigma(x) + (1 - \alpha)\sigma(y)
+\]
+- Proposition 9: \(\mathbf{x}\) is an extreme point of \(F \iff \hat{\mathbf{x}}\) is an extreme point of \(\hat{F}\)
+\end{frame}
+
+% ========== 第87页 ==========
+\begin{frame}{Example: Mapping σ}
+\[
+F = \{[x_1, x_2]^T : x_1 + x_2 \le 1, x_1 \ge 0, x_2 \ge 0\}
+\]
+\[
+\hat{F} = \{[x_1, x_2, x_3]^T : x_1 + x_2 + x_3 = 1, x_1 \ge 0, x_2 \ge 0, x_3 \ge 0\}
+\]
+\[
+\sigma([1, 0]^T) = [1, 0, 0]^T, \quad \sigma([0, 1]^T) = [0, 1, 0]^T, \quad \sigma([0, 0]^T) = [0, 0, 1]^T
+\]
+\end{frame}
+
+% ========== 第88页 ==========
+\begin{frame}{Theorem on Extreme Points of F̂}
+\textbf{Theorem} \\
+If \(\hat{x}\) is an extreme point of \(\hat{F}\) and \(\Delta = \{j: |\hat{x}_j| > 0\}\) , then the columns \(\left\{\hat{A}^{(j)}: j \in \Delta\right\}\) is linearly independent \\
+If
+\begin{itemize}
+    \item (a) \(\left\{\hat{A}^{(i)}: i \in \Delta\right\}\) is some collection of \(m\) linearly independent columns of \(\hat{A}\)
+    \item (b) \(\mathbf{B}\) is the matrix whose columns are \(\left\{\hat{A}^{(i)}: i \in \Delta\right\}\)
+    \item (c) \(\mathbf{x}^*\) is a solution to \(\mathbf{B}\mathbf{x} = \mathbf{b}, \mathbf{x} \geq \mathbf{0}\)
+\end{itemize}
+Then the vector \(\hat{x}\) whose \(i\) - th entry
+\[
+[\hat{x}]_i = \left\{ \begin{array}{ll} 0, & i \notin \Delta \\ [\mathbf{x}^*]_i, & i \in \Delta \end{array} \right.
+\]
+is an extreme point of \(\hat{F}\)
+\end{frame}
+
+% ========== 第89页 ==========
+\begin{frame}{Example: Reformulation with Slack}
+- Minimize \(f(x_1, x_2) = -x_1 + x_2\), subject to the constraints
+\begin{align*}
+-x_1 + 2x_2 & \leq & 10 \\
+5x_1 + 3x_2 & \leq & 41 \\
+2x_1 - 3x_2 & \leq & 8 \\
+x_1 & \geq & 0 \\
+x_2 & \geq & 0
+\end{align*}
+- Reformulation: \(\min \{-x_1 + x_2 + 0 \cdot x_3 + 0 \cdot x_4 + 0 \cdot x_5\}\), subject to \(x_i \geq 0, \forall i \in \{1, \ldots, 5\}\), and
+\[
+\begin{bmatrix}
+-1 & 2 & 1 & 0 & 0 \\
+5 & 3 & 0 & 1 & 0 \\
+2 & -3 & 0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3 \\
+x_4 \\
+x_5
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 \\
+41 \\
+8
+\end{bmatrix}
+\]
+\end{frame}
+
+% ========== 第90页 ==========
+\begin{frame}{Example: Finding Extreme Points}
+At most \(\binom{5}{3} = 10\) sets of three linearly independent columns in the coefficient matrix \\
+Select the first three columns \((x_{4} = x_{5} = 0)\)
+\[
+\mathbf{B} = [\hat{\mathbf{A}}^{(1)},\hat{\mathbf{A}}^{(2)},\hat{\mathbf{A}}^{(3)}]
+\]
+\(x_{1} = 7,x_{2} = 2,x_{3} = 13\) all nonnegative \(\mathbf{x}^{*} = [7,2,13]^{T}\) \(\rightarrow \hat{\mathbf{x}} = [7,2,13,0,0]^{T}\) is an extreme point of \(\hat{F}\) \(\rightarrow [7,2]^{T}\) is an extreme point of \(F\)
+\end{frame}
+
+% ========== 第91页 ==========
+\begin{frame}{Example: Invalid Basis}
+- Select \(\hat{A}^{(1)}, \hat{A}^{(2)}, \hat{A}^{(4)}\) (\(x_3=x_5=0\))
+\[
+\mathbf{B} = [\hat{\mathbf{A}}^{(1)},\hat{\mathbf{A}}^{(2)},\hat{\mathbf{A}}^{(4)}]
+= \begin{bmatrix}
+-1 & 2 & 0 \\
+5 & 3 & 1 \\
+2 & -3 & 0
+\end{bmatrix}
+\]
+Solving \(\mathbf{B}\mathbf{x}=\mathbf{b}\) gives \(x_1=46\), \(x_2=28\), \(x_4=-273\) (negative), so \([46,28,0,-273,0]^T\notin\hat{F}\), hence \([46,28]^T\) is NOT an extreme point of \(F\).
+\end{frame}
+
+% ========== 第92页 ==========
+\begin{frame}{Primal Simplex: Equality Form}
+Any LLP can be expressed as:
+\[
+\min \mathbf{c}^T\mathbf{x}\mathrm{~subject~to~}\mathbf{A}\mathbf{x} = \mathbf{b}\mathrm{~and~}\mathbf{x}\geq \mathbf{0}
+\]
+\(\mathbf{A} \in \mathbf{R}_{m\times n}\) \(\mathbf{x}\in \mathbf{R}_{n\times 1}\) , and \(\operatorname {rank}(\mathbf{A}) = m\leq n\) \\
+All the constraints are equality constraints \\
+Each \(\mathbf{x}_i\) is restricted to be nonnegative \\
+Equivalent problem with \(z_{o} = \mathbf{c}^{T}\mathbf{x}\) : Finding a solution \(\mathbf{x}\in \mathbf{R}_{n\times 1}\) and \(z_{o}\in \mathcal{R}\)
+\[
+\begin{array}{rcl}{\mathbf{A}\mathbf{x}} & = & {\mathbf{b}}\\ {-\mathbf{c}^{T}\mathbf{x} + z_{o}} & = & {0} \end{array}
+\]
+for \(\mathbf{x}\geq \mathbf{0}\) and \(z_{o}\) is minimal
+\end{frame}
+
+% ========== 第93页 ==========
+\begin{frame}{Primal Simplex: Matrix Equation}
+Matrix equation \\
+Assume \(\operatorname{rank}(\mathbf{A}) = m\):
+\[
+\mathbf{A} = \underbrace{\left[\mathbf{A}^{(1)},\ldots,\mathbf{A}^{(m)},\mathbf{A}^{(m + 1)},\ldots,\mathbf{A}^{(n)}\right]}_{\coloneqq \mathbf{B}} = \mathbf{D}
+\]
+Initial matrix for the problem:
+\[
+\textit{[此处为初始矩阵的示意图，包含 A, b, c, z_o 的分块结构]}
+\]
+\end{frame}
+
+% ========== 第94页 ==========
+\begin{frame}{Primal Simplex: Initial Tableau}
+- Left multiplying the initial matrix by:
+\[
+\textit{[此处为矩阵乘法示意图]}
+\]
+- It results simplex tableau:
+\[
+\textit{[此处为单纯形表形式的矩阵示意图]}
+\]
+- Can be alternatively done by a sequence of elementary row operations
+\end{frame}
+
+% ========== 第95页 ==========
+\begin{frame}{Primal Simplex: Simplex Tableau}
+Above augmented matrix represents the linear system:
+\[
+\begin{bmatrix}
+\mathbf{I}_m & \mathbf{B}^{-1}\mathbf{D} & \mathbf{0} \\
+\mathbf{0}^T & \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{D} - \mathbf{c}_D^T & 1
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x}_B \\
+\mathbf{x}_D \\
+z_o
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf{B}^{-1}\mathbf{b} \\
+\mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{b}
+\end{bmatrix}
+\]
+\begin{cases}
+\mathbf{x}_B + \mathbf{B}^{-1}\mathbf{D}\mathbf{x}_D = \mathbf{B}^{-1}\mathbf{b} \\
+(\mathbf{c}_B\mathbf{B}^{-1}\mathbf{D} - \mathbf{c}_D^T)\mathbf{x}_D + z_o = \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{b}
+\end{cases}
+If \(\mathbf{B}^{-1}\mathbf{b} \ge 0\), \(\mathbf{c}_B\mathbf{B}^{-1}\mathbf{D} - \mathbf{c}_D^T \le 0^T\):
+\begin{cases}
+z_o = \mathbf{c}_B^T \mathbf{B}^{-1} \mathbf{b} \\
+\mathbf{x}_B = \mathbf{B}^{-1} \mathbf{b} \\
+\mathbf{x}_D = \mathbf{0}
+\end{cases}
+\end{frame}
+
+% ========== 第96页 ==========
+\begin{frame}{Example: Primal Simplex}
+\textbf{Question:}
+\[
+\min -2x_1 - x_2 + 2x_3
+\]
+subject to
+\begin{array}{rcl} x_1 + x_3 & = & 4 \\ -2x_1 + x_2 & = & 8 \\ x_1 & \geq & 0 \\ x_2 & \geq & 0 \\ x_3 & \geq & 0 \end{array}
+\end{frame}
+
+% ========== 第97页 ==========
+\begin{frame}{Example: Basis Selection}
+\textbf{Solution:} By elementary row operations,
+\[
+\textit{[此处为包含增广矩阵的单纯形表]}
+\]
+In above, \(\mathbf{B} = [\mathbf{A}^{(3)},\mathbf{A}^{(2)}]\)
+\end{frame}
+
+% ========== 第98页 ==========
+\begin{frame}{Theorem 1: Optimality Condition}
+\textbf{Theorem 1:} Solution for \(\min \mathbf{c}^T\mathbf{x}\) subject to \(\mathbf{A}\mathbf{x} = \mathbf{b}\) and \(\mathbf{x} \geq \mathbf{0}\) \\
+If \(\mathbf{B}^{-1}\mathbf{b} \geq 0\) and \(\mathbf{c}_B\mathbf{B}^{-1}\mathbf{D} - \mathbf{c}_D^T \leq \mathbf{0}^T\), then the feasible solution
+\[
+\mathbf{x}_o = \begin{bmatrix} \mathbf{x}_B \\ \mathbf{x}_D \end{bmatrix} := \begin{bmatrix} \mathbf{B}^{-1}\mathbf{b} \\ \mathbf{0} \end{bmatrix}
+\]
+is optimal, and \(z_o = \min \mathbf{c}^T\mathbf{x} = \mathbf{c}^T\mathbf{x}_o = \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{b}\) \\
+\textbf{Proof:} Suppose an \textbf{arbitrary} feasible solution \(\mathbf{A}\bar{\mathbf{x}} = \mathbf{b}\) and \(\bar{\mathbf{x}} \geq \mathbf{0}\)
+\begin{align*}
+\mathbf{b} &= \mathbf{A}\bar{\mathbf{x}} = [\mathbf{B},\mathbf{D}]\bar{\mathbf{x}} = \mathbf{B}[\mathbf{I}_m,\mathbf{B}^{-1}\mathbf{D}]\bar{\mathbf{x}} = \mathbf{B}\mathbf{x}_B \\
+&\Rightarrow \mathbf{B}[\mathbf{x}_B - [\mathbf{I}_m,\mathbf{B}^{-1}\mathbf{D}]\bar{\mathbf{x}}] = \mathbf{0} \\
+&\Rightarrow \mathbf{x}_B = [\mathbf{I}_m,\mathbf{B}^{-1}\mathbf{D}]\bar{\mathbf{x}} \\
+&\Rightarrow \mathbf{c}_B^T\mathbf{x}_B = [\mathbf{c}_B^T,\mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{D}]\bar{\mathbf{x}} \\
+&\leq [\mathbf{c}_B^T,\mathbf{c}_D^T]\bar{\mathbf{x}} = \mathbf{c}^T\bar{\mathbf{x}}
+\end{align*}
+\(\mathbf{c}_B^T\mathbf{x}_B\) is the minimal value for the problem, and \(\mathbf{x}_o\) is optimal.
+\end{frame}
+
+% ========== 第99页 ==========
+\begin{frame}{Basic Solutions and BFS}
+- Basic solution of \(\mathbf{A}\mathbf{x} = \mathbf{b}\):
+\[
+\mathbf{x}_B = \mathbf{B}^{-1}\mathbf{b}, \quad \mathbf{x}_D = \mathbf{0}
+\]
+- Basis matrix: the nonsingular matrix \(\mathbf{B}\) \\
+- Admissible basis: \(\mathbf{A}^{(1)},\ldots ,\mathbf{A}^{(m)}\) \\
+- Basic feasible solution (BFS): a basic solution that is feasible \\
+- Nondegenerate BFS: A BFS for which \(\mathbf{x}_B = \mathbf{B}^{-1}\mathbf{b} > 0\) \\
+- Theorem 1 gives a sufficient condition, i.e., \(\mathbf{c}_B\mathbf{B}^{-1}\mathbf{D} - \mathbf{c}_D^T \leq \mathbf{0}^T\), for a BFS \(\mathbf{x}_B = \mathbf{B}^{-1}\mathbf{b} > 0\), and \(\mathbf{x}_D = \mathbf{0}^T\) to be an optimal solution.
+\end{frame}
+
+% ========== 第100页 ==========
+\begin{frame}{Feasible, Basic, and BFS}
+- Feasible Solution: "Qualified", wide range candidates
+\[
+\hat{A}\hat{x} = \mathbf{b}, \quad \hat{x}\geq 0
+\]
+- Basic Solution: "Simple \& Efficient", not necessarily feasible
+\[
+\hat{A}\hat{x} = \mathbf{b}, \quad \mathbf{x}_D = \mathbf{0}
+\]
+- BFS: "Key candidates" for optimal
+\[
+\hat{A}\hat{x} = \mathbf{b}, \quad \mathbf{x}_D = \mathbf{0}, \quad \hat{x}\geq 0
+\]
+\end{frame}
+
+% ========== 第101页 ==========
+\begin{frame}{Example: LP with Slack}
+\textbf{Question:} \(\min 10x_1 + 18x_2\) subject to
+\begin{align*}
+5x_1 + 2x_2 &\leq 170 \\
+2x_1 + 3x_2 &\leq 100 \\
+x_1 + 5x_2 &\leq 150 \\
+x_i &\geq 0, \forall i \in \{1, 2\}
+\end{align*}
+\textbf{Reformation:}
+\begin{align*}
+5x_1 + 2x_2 + x_3 &= 170 \\
+2x_1 + 3x_2 + x_4 &= 100 \\
+x_1 + 5x_2 + x_5 &= 150 \\
+x_i &\geq 0, \forall i \in \{1, 2, ..., 5\}
+\end{align*}
+\end{frame}
+
+% ========== 第102页 ==========
+\begin{frame}{Example: Geometric Interpretation}
+\textit{[此处为不等式约束围成的多边形的几何插图]}
+基本解(10个): \(O, A, B, E, F, G, H, I\) \\
+基本可行解(5个): \(O, A, B, C, E\) \\
+最优解(1个): \(C\)
+\end{frame}
+
+% ========== 第103页 ==========
+\begin{frame}{Simplex Tableau Details}
+\textbf{The Primal Simplex Procedure} \\
+Simplex Tableau:
+\[
+\begin{bmatrix}
+\mathbf{I}_m & \mathbf{B}^{-1}\mathbf{D} & \mathbf{0} & \mathbf{B}^{-1}\mathbf{b} \\
+\mathbf{0}^T & \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{D} - \mathbf{c}_D^T & 1 & \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{b}
+\end{bmatrix}
+\]
+\(X_B \triangleq [\mathbf{I}_m, \mathbf{B}^{-1}\mathbf{D}]\)
+\[
+X_B = \begin{bmatrix} 1 & 0 & \cdots & 0 & x_{1,m+1} & \cdots & x_{1,j} & \cdots & x_{1,n} \\ 0 & 1 & \cdots & 0 & x_{2,m+1} & \cdots & x_{2,j} & \cdots & x_{2,n} \\ \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & 1 & x_{m,m+1} & \cdots & x_{m,j} & \cdots & x_{m,n} \end{bmatrix}
+\]
+\(z_j \triangleq c_B^T \mathbf{B}^{-1} \mathbf{A}^{(j)}, c_j \triangleq [\mathbf{c}]_j, \forall j = 1, \ldots, n\)
+\[
+z_j - c_j = \begin{cases} 0 & j = 1, \ldots, m \\ [c_B^T \mathbf{B}^{-1} \mathbf{D} - c_D^T]_j & j = m+1, \ldots, n \end{cases}
+\]
+\end{frame}
+
+% ========== 第104页 ==========
+\begin{frame}{Theorem 2: Unboundedness}
+\textbf{Theorem 1:} If \(z_j - c_j \leq 0\), \(\forall j = 1, \ldots , n\), the BFS \(\{x_B = \mathbf{B}^{-1} \mathbf{b} \geq 0, \mathbf{x}_D = 0\}\) is an optimal solution \\
+What if \(z_j - c_j > 0\), for some \(j\) ? \\
+\(\downarrow\) \\
+\textbf{Theorem 2:} If there exists a \(j\) so that \(z_j - c_j > 0\) and each \(x_{i,j} \leq 0\), then the LLP
+\[
+\min \mathbf{c}^T \mathbf{x} \text{ subject to } \mathbf{A} \mathbf{x} = \mathbf{b} \text{ and } \mathbf{x} \geq \mathbf{0}
+\]
+has an unbounded minimum over \(F\)
+\end{frame}
+
+% ========== 第105页 ==========
+\begin{frame}{Theorem 3 \& 4: Pivoting and Optimality}
+\textbf{Theorem 3} \\
+If there exists a \(j\) so that \(z_{j} - c_{j} > 0\) , and if some \(x_{i,j} > 0\) , then by pivoting at the element \(x_{k,j}\) , a new basic feasible solution is generated that does not increase the value of \(z_{o}\) . Note that \(k\) is selected such that
+\[
+\theta \triangleq \frac{[\mathbf{B}^{-1}\mathbf{b}]_{k}}{x_{k,j}} = \min \left\{\frac{[\mathbf{B}^{-1}\mathbf{b}]_{i}}{x_{i,j}}:x_{i,j} > 0\right\}
+\]
+If \(\mathbf{B}^{- 1}\mathbf{b} > 0\) , i.e., the BFS \(\mathbf{x}_{B} = \mathbf{B}^{- 1}\mathbf{b}\) and \(\mathbf{x}_{D} = \mathbf{0}\) is nondegenerate, then the value of \(z_{o}\) decreases. \\
+\textbf{Theorem 4} \\
+If \(\mathbf{c}^{T}\mathbf{x}\) obtains a finite minimum over \(F\) , then the minimum occurs at a BFS of \(F\) (the minimum may occur at other places as well)
+\end{frame}
+
+% ========== 第106页 ==========
+\begin{frame}{Example: Introducing Slack}
+\textbf{Question} \\
+\[
+\min \mathbf{c}^T\mathbf{x}
+\]
+subject to
+\begin{align*}
+3x_1 + x_3 - x_4 &= 1 \\
+7x_1 + x_2 - x_4 &= 0 \\
+-8x_1 + x_4 &\leq 1 \\
+x_i &\geq 0, \forall i
+\end{align*}
+\end{frame}
+
+% ========== 第107页 ==========
+\begin{frame}{Example: Augmented Form}
+- Add a slack variable
+\[
+\min \mathbf{c}^T\mathbf{x}
+\]
+subject to
+\[
+\textit{[此处为增广矩阵与常数的表达]}
+\]
+\[
+\mathbf{c} = [1, - 1, 2, - 3, 0]^T
+\]
+\end{frame}
+
+% ========== 第108页 ==========
+\begin{frame}{Example: Basis and BFS}
+\textbf{Example 14}
+\[
+\begin{bmatrix}
+3 & 0 & 1 & -1 & 0 & 0 & 1 \\
+7 & 1 & 0 & -1 & 0 & 0 & 0 \\
+-8 & 0 & 0 & -1 & 1 & 0 & 1 \\
+-1 & 1 & -2 & -3 & -1 & 0 & 1
+\end{bmatrix}
+\]
+Row operation: \(\mathbf{A}_{(4)} - (\mathbf{A}_{(2)} - 2\mathbf{A}_{(1)})\)
+\[
+\begin{bmatrix}
+3 & 0 & 1 & -1 & 0 & 0 & 1 \\
+7 & 1 & 0 & -1 & 0 & 0 & 0 \\
+-8 & 0 & 0 & -1 & 1 & 0 & 1 \\
+-2 & 0 & 0 & -2 & -1 & 1 & 2
+\end{bmatrix}
+\]
+\(\mathbf{B} = [\mathbf{A}^{(3)}, \mathbf{A}^{(2)}, \mathbf{A}^{(5)}]\) is nonsingular \\
+\(\mathbf{D} = [\mathbf{A}^{(1)}, \mathbf{A}^{(4)}]\) \\
+BFS: \([x_3, x_2, x_5]^T = [1, 0, 1]^T, [x_1, x_4]^T = [0, 0]^T\) (degenerate)
+\end{frame}
+
+% ========== 第109页 ==========
+\begin{frame}{Example: Pivot and Unboundedness}
+\textbf{Example 14}
+\[
+\begin{bmatrix}
+3 & 0 & 1 & -1 & 0 & 0 & 1 \\
+7 & 1 & 0 & -1 & 0 & 0 & 0 \\
+-8 & 0 & 0 & -1 & 0 & 1 & 1 \\
+-2 & 0 & 0 & -2 & 0 & 1 & 2
+\end{bmatrix}
+\]
+Row operations: \(\mathbf{A}_{(1)}+\mathbf{A}_{(3)}, \mathbf{A}_{(2)}+\mathbf{A}_{(3)}, \mathbf{A}_{(4)}-2\mathbf{A}_{(3)}\)
+\[
+\begin{bmatrix}
+-5 & 0 & 1 & 0 & 1 & 0 & 2 \\
+-1 & 1 & 0 & 0 & 1 & 0 & 1 \\
+-8 & 0 & 0 & -1 & 0 & 1 & 1 \\
+-14 & 0 & 0 & -2 & 0 & 1 & 0
+\end{bmatrix}
+\]
+(1) Pivot in the 4th column, since \(z_4 - c_4 = 2 > 0\) \\
+(2) \(\min \left\{ \frac{|\mathbf{B}^{-1}\mathbf{b}_i|}{x_{i,4}} : x_{i,4} > 0 \right\} = 1 \Rightarrow k = 3 \Rightarrow \text{pivoting } x_{3,4}\) \\
+(3) \(\mathbf{B} = [\mathbf{A}^{(3)}, \mathbf{A}^{(2)}, \mathbf{A}^{(4)}]\) and \(\mathbf{D} = [\mathbf{A}^{(1)}, \mathbf{A}^{(5)}]\) \\
+(4) BFS: \(x_3 = 2\), \(x_2 = 1\), \(x_4 = 1\), and \(x_1 = x_5 = 0\) \\
+(5) \(z_1 - c_1 = 14\), \(x_{1,1} = -5\), \(x_{2,1} = -1\), and \(x_{3,1} = -8\), the LLP has an unbounded minimum (Theorem 2)
+\end{frame}
+
+% ========== 第110页 ==========
+\begin{frame}{Example: Maximization to Minimization}
+\textbf{Question}
+\[
+\max 2x_1 + x_2 + 3x_3
+\]
+subject to
+\begin{align*}
+x_1 + 3x_2 + 2x_3 & \leq 6 \\
+-x_1 + x_2 - 3x_3 & \geq -9 \\
+x_i & \geq 0, \quad \forall i
+\end{align*}
+\textbf{Transformation}
+\[
+\min -2x_1 - x_2 - 3x_3
+\]
+subject to
+\begin{align*}
+x_1 + 3x_2 + 2x_3 + x_4 & = 6 \\
+x_1 - x_2 + 3x_3 + x_5 & = 9 \\
+x_i & \geq 0, \quad \forall i
+\end{align*}
+\end{frame}
+
+% ========== 第111页 ==========
+\begin{frame}{Example: Simplex Iterations}
+\textbf{Example 15}
+\[
+\begin{bmatrix}
+1 & 3 & 2 & 1 & 0 & 0 & 6 \\
+-1 & 1 & -3 & 0 & 1 & 0 & 9
+\end{bmatrix}
+\]
+Row operations: \(\mathbf{A}_{(2)} - \frac{3}{2}\mathbf{A}_{(1)}\), \(\mathbf{A}_{(3)} - \frac{3}{2}\mathbf{A}_{(1)}\), \(\frac{1}{2}\mathbf{A}_{(1)}\)
+\[
+\begin{bmatrix}
+\frac{1}{2} & \frac{3}{2} & 1 & \frac{1}{2} & 0 & 0 & 3 \\
+-\frac{1}{2} & -\frac{7}{2} & 0 & -\frac{3}{2} & 1 & 0 & 0
+\end{bmatrix}
+\]
+BSF: \(\mathbf{x} = [0,0,0,6,9]^T\), with admissible basis of \(\{\mathbf{A}^{(4)},\mathbf{A}^{(5)}\}\) \\
+Pivot in the 3rd column, since \(z_3 - c_3 = 3 > 0\) \\
+\(\theta = \min \left\{ \frac{|\mathbf{B}^{-1}\mathbf{b}|_i}{x_{i,3}} : x_{i,3} > 0 \right\} = \min \left\{ \frac{6}{2}, \frac{9}{3} \right\} = 3\), either pivoting \(x_{1,3}\) or \(x_{2,3}\)
+\end{frame}
+
+% ========== 第112页 ==========
+\begin{frame}{Example: Degeneracy and Pivot}
+\textbf{Example 15}
+\[
+\begin{bmatrix}
+\frac{1}{2} & \frac{3}{2} & 1 & \frac{1}{2} & 0 & 0 & 3 \\
+-\frac{1}{2} & -\frac{7}{2} & 0 & -\frac{3}{2} & 1 & 0 & 0
+\end{bmatrix}
+\]
+Row operations: \(\mathbf{A}_{(2)} + \mathbf{A}_{(1)}\), \(\mathbf{A}_{(3)} - \mathbf{A}_{(1)}\), \(2\mathbf{A}_{(1)}\)
+\[
+\begin{bmatrix}
+1 & 3 & 2 & 1 & 0 & 0 & 6 \\
+0 & -4 & 1 & -1 & 1 & 0 & 3
+\end{bmatrix}
+\]
+New BSF: \(\{\mathbf{A}^{(3)},\mathbf{A}^{(5)}\}, \mathbf{x} = [0,0,3,0,0]^T\) (degenerate) \\
+Pivot in the 1st column, since \(z_1 - c_1 = \frac{1}{2} > 0\) \\
+\(\theta = \min \left\{ \frac{|\mathbf{B}^{-1}\mathbf{b}|_i}{x_{i,1}} : x_{i,1} > 0 \right\} = \min \{6\} = 6\), pivoting \(x_{1,1}\)
+\end{frame}
+
+% ========== 第113页 ==========
+\begin{frame}{Example: Optimal Solution}
+\textbf{Example 15}
+\[
+\begin{bmatrix}
+1 & 3 & 2 & 1 & 0 & 0 & 6 \\
+0 & -4 & 1 & -1 & 1 & 0 & 3
+\end{bmatrix}
+\]
+Row operation: \(\mathbf{A}_{(2)} - \mathbf{A}_{(1)}\)
+\[
+\begin{bmatrix}
+1 & 3 & 2 & 1 & 0 & 0 & 6 \\
+0 & -4 & -5 & -1 & -1 & 0 & -12
+\end{bmatrix}
+\]
+New BSF: \(\{\mathbf{A}^{(1)},\mathbf{A}^{(5)}\}, \mathbf{x} = [6,0,0,0,3]^T\) \\
+Since \(z_j - c_j \leq 0, \forall j\), then \(\mathbf{x} = [6,0,0,0,3]^T\) is the optimum, and \(z_o = -12\) (Theorem 1) \\
+Original LLP: \(\max \{c^T x : x \in F\} = 12\), and \(x = [6, 0, 0]^T\)
+\end{frame}
+
+% ========== 第114页 ==========
+\begin{frame}{Example: New Problem}
+\textbf{Question} \\
+\[
+\min \mathbf{c}^T\mathbf{x}
+\]
+subject to
+\begin{align*}
+16x_{1} + 2x_{2} + x_{5} + 10x_{6} &= 4 \\
+-x_{1} + x_{4} + x_{6} &= 0 \\
+5x_{1} + 4x_{2} + x_{3} &= 8 \\
+x_{i} &\geq 0, \quad \forall i
+\end{align*}
+where \(\mathbf{c} = [1, -1, 2, -3, 0, 0]^T\)
+\end{frame}
+
+% ========== 第115页 ==========
+\begin{frame}{Example: Simplex Steps}
+\textbf{Example 16}
+\[
+\begin{bmatrix}
+16 & 2 & 0 & 0 & 1 & 10 & 0 & 4 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+5 & 4 & 1 & 0 & 0 & 0 & 0 & 8 \\
+-1 & -1 & -2 & -3 & 0 & 0 & 1 & 0
+\end{bmatrix}
+\]
+\(\downarrow A_{(4)} + (A_{(1)} + A_{(2)} + A_{(3)})\)
+\[
+\begin{bmatrix}
+16 & 2 & 0 & 0 & 1 & 10 & 0 & 4 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+5 & 4 & 1 & 0 & 0 & 0 & 0 & 8 \\
+19 & 5 & 0 & 0 & 0 & 10 & 1 & 12
+\end{bmatrix}
+\]
+BSF: \(\mathbf{x} = [0, 0, 8, 0, 4, 0]^T\) (degenerate), with admissible basis of \(\{\mathbf{A}^{(5)}, \mathbf{A}^{(4)}, \mathbf{A}^{(3)}\}\) \\
+Pivot in the 6th column, since \(z_6 - c_6 = 10 > 0\) \\
+\(\theta = \min \{0, \frac{4}{10}\} = 0\), pivoting \(x_{2,6}\)
+\end{frame}
+
+% ========== 第116页 ==========
+\begin{frame}{Example: Pivot Selection}
+\textbf{Example 16}
+\[
+\begin{bmatrix}
+16 & 2 & 0 & 0 & 1 & 10 & 0 & 4 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+5 & 4 & 1 & 0 & 0 & 0 & 0 & 8 \\
+19 & 5 & 0 & 0 & 0 & 10 & 1 & 12
+\end{bmatrix}
+\]
+\(\downarrow A_{(1)} - 10A_{(2)}, \quad A_{(4)} - 10A_{(2)}\)
+\[
+\begin{bmatrix}
+26 & 2 & 0 & -10 & 1 & 0 & 0 & 4 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+5 & 4 & 1 & 0 & 0 & 0 & 0 & 8 \\
+29 & 5 & 0 & -10 & 0 & 0 & 1 & 12
+\end{bmatrix}
+\]
+BSF: \(\mathbf{x} = [0, 0, 8, 0, 0, 4]^T\) (degenerate), with admissible basis of \(\{\mathbf{A}^{(5)}, \mathbf{A}^{(6)}, \mathbf{A}^{(3)}\}\) \\
+Pivot in the 2nd column, since \(z_2 - c_2 = 5 > 0\) \\
+\(\theta = \min\{\frac{4}{2}, \frac{8}{4}\} = 2\), pivoting either \(x_{1,2}\) or \(x_{3,2}\)
+\end{frame}
+
+% ========== 第117页 ==========
+\begin{frame}{Example: Further Pivoting}
+\textbf{Example 16}
+\[
+\begin{bmatrix}
+26 & 2 & 0 & -10 & 1 & 0 & 0 & 4 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+5 & 4 & 1 & 0 & 0 & 0 & 0 & 8 \\
+29 & 5 & 0 & -10 & 0 & 0 & 1 & 12
+\end{bmatrix}
+\]
+\(\downarrow A_{(3)} - 2A_{(1)}, \quad A_{(4)} - \frac{5}{2}A_{(1)}, \quad \frac{1}{2}A_{(1)}\)
+\[
+\begin{bmatrix}
+13 & 1 & 0 & -5 & \frac{1}{2} & 0 & 0 & 2 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+-21 & 0 & 1 & 20 & -2 & 0 & 0 & 4 \\
+-36 & 0 & 0 & 15 & -\frac{5}{2} & 0 & 1 & 2
+\end{bmatrix}
+\]
+BSF: \(x = [0, 2, 0, 0, 0, 0]^T\) (degenerate), with admissible basis of \(\{\mathbf{A}^{(2)}, \mathbf{A}^{(6)}, \mathbf{A}^{(3)}\}\) \\
+Pivot in the 4th column, since \(z_4 - c_4 = 15 > 0\) \\
+\(\theta = \min\{\frac{0}{1}, \frac{0}{20}\} = 0\), pivoting either \(x_{2,4}\) or \(x_{3,4}\)
+\end{frame}
+
+% ========== 第118页 ==========
+\begin{frame}{Example: Optimality Reached}
+\textbf{Example 16}
+\[
+\begin{bmatrix}
+13 & 1 & 0 & -5 & \frac{1}{2} & 0 & 0 & 2 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+-21 & 0 & 1 & 20 & -2 & 0 & 0 & 4 \\
+-36 & 0 & 0 & 15 & -\frac{5}{2} & 0 & 1 & 2
+\end{bmatrix}
+\]
+\(\downarrow A_{(1)} + 5A_{(2)}, \quad A_{(3)} - 20A_{(2)}, \quad A_{(4)} - 15A_{(2)}\)
+\[
+\begin{bmatrix}
+8 & 1 & 0 & 0 & \frac{1}{2} & 5 & 0 & 2 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+-1 & 0 & 1 & 0 & -2 & -20 & 0 & 4 \\
+-21 & 0 & 0 & 0 & -\frac{5}{2} & -15 & 1 & 2
+\end{bmatrix}
+\]
+Since \(z_j - c_j \le 0, \forall j\), then \(\mathbf{x} = [0, 2, 0, 0, 0, 0]^T\) is the optimum, and \(z_o = 2\) (Theorem 1) \\
+The admissible basis: \(\{\mathbf{A}^{(2)}, \mathbf{A}^{(4)}, \mathbf{A}^{(3)}\}\)
+\end{frame}
+
+% ========== 第119页 ==========
+\begin{frame}{Example: Multiple Optima}
+\textbf{Question:} Find several points \(\mathbf{x} = [x_1, x_2, x_3, x_4]^T\) that solve the problem
+\[
+\min 3x_1 + 2x_2 + 6x_3 + x_4
+\]
+subject to
+\begin{align*}
+x_1 + x_4 &= 4 \\
+x_1 + x_2 + x_3 &= 5 \\
+x_i &\geq 0, \forall i
+\end{align*}
+\end{frame}
+
+% ========== 第120页 ==========
+\begin{frame}{Example: Finding BFS}
+\textbf{Example 17}
+\[
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 4 \\
+1 & 1 & 1 & 0 & 0 & 5 \\
+-3 & -2 & -6 & -1 & 1 & 0
+\end{bmatrix}
+\Rightarrow
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 4 \\
+1 & 1 & 1 & 0 & 0 & 5 \\
+0 & 0 & -2 & -2 & 0 & 1
+\end{bmatrix}
+\]
+BSF: \(\{\mathbf{A}^{(4)}, \mathbf{A}^{(2)}\}, \mathbf{x} = [0, 5, 0, 4]^T\) \\
+Since \(z_j - c_j \leq 0, \forall j\), then \(\mathbf{x}_1 = [0, 5, 0, 4]^T\) is the optimum, and \(z_o = 14\) (Theorem 1)
+\end{frame}
+
+% ========== 第121页 ==========
+\begin{frame}{Example: Alternative Optimal Solution}
+\textbf{Example 17}
+\[
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 4 \\
+1 & 1 & 1 & 0 & 0 & 5 \\
+0 & 0 & -2 & -2 & 0 & 1
+\end{bmatrix}
+\Rightarrow
+\mathbf{A}_{(2)} - \mathbf{A}_{(1)}
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 4 \\
+0 & 1 & 1 & -1 & 0 & 1 \\
+0 & 0 & -2 & -2 & 0 & 1
+\end{bmatrix}
+\]
+Consider \(z_1 - c_1 = 0\), \(\theta = \min\{\frac{4}{1}, \frac{5}{1}\} = 4\), pivoting \(x_{1,1}\) \\
+BSF: \(\{\mathbf{A}^{(1)}, \mathbf{A}^{(2)}\}, \mathbf{x} = [4, 1, 0, 0]^T\) \\
+Since \(z_j - c_j \le 0, \forall j\), then \(\mathbf{x}_2 = [4, 1, 0, 0]^T\) is also the optimum, and \(z_o = 14\) (Theorem 1)
+\end{frame}
+
+% ========== 第122页 ==========
+\begin{frame}{Useful Points in Simplex}
+Useful points when using the primal simplex procedure:
+\begin{enumerate}
+    \item \(z_0\) should never increase from one tableau to the next
+    \item \(\mathbf{B}^{-1}\mathbf{b}\) should never contain negative components
+    \item For each \(\mathbf{A}^{(j)}\) in the admissible basis, \(z_j - c_j = 0\)
+\end{enumerate}
+\end{frame}
+
+% ========== 第123页 ==========
+\begin{frame}{Artificial Variables Introduction}
+To solve LLP with the primal simplex procedure, an initial BFS of \(F\) is required before setting up the first tableau. \\
+This is possible after adding slack variables, \(\mathbf{A} = [a_{i,j}]\) contains \(\mathbf{I}_{m}\) \\
+\textbf{Question:} What if \(\mathbf{A} = [a_{i,j}]\) does NOT contain \(\mathbf{I}_{m}\) ?
+\end{frame}
+
+% ========== 第124页 ==========
+\begin{frame}{Artificial Variables Formulation}
+\textbf{Question:}
+\[
+\min \quad c_1x_1 + \dots + c_nx_n + Mx_{n+1} + \dots + Mx_{n+m}
+\]
+subject to
+\begin{align*}
+a_{1,1}x_1 + \dots + a_{1,n}x_n + x_{n+1} &= b_1 \\
+a_{2,1}x_1 + \dots + a_{2,n}x_n + x_{n+2} &= b_2 \\
+\vdots & \vdots \\
+a_{m,1}x_1 + \dots + a_{m,n}x_n + x_{n+m} &= b_m
+\end{align*}
+\[
+x_1 \ge 0, \dots, x_n \ge 0, x_{n+1} \ge 0, \dots, x_{n+m} \ge 0
+\]
+\(M\): an unspecified large positive number \\
+\(x_{n+1}, \dots, x_{n+m}\): artificial variables
+\end{frame}
+
+% ========== 第125页 ==========
+\begin{frame}{Objective with Artificial Variables}
+- The objective function:
+\begin{align*}
+f(\mathbf{y}) &= c_1y_1 + \dots +c_ny_n \\
+\bar{f}(\bar{\mathbf{y}}) &= c_1y_1 + \dots +c_ny_n + My_{n+1} + \dots +My_{n+m}
+\end{align*}
+- The set of feasible solutions:
+\begin{align*}
+F &= \{\mathbf{y}\in \mathbf{R}_{n\times 1}:\mathbf{A}\mathbf{y} = \mathbf{b},\mathbf{y}\geq 0\} \\
+\bar{F} &= \{\bar{\mathbf{y}}\in \mathbf{R}_{(n + m)\times 1}:[\mathbf{A},\mathbf{I}_m]\bar{\mathbf{y}} = \mathbf{b},\bar{\mathbf{y}}\geq 0\}
+\end{align*}
+- Specific solution:
+\[
+\textit{[此处为人工变量构造的初始单纯形表格]}
+\]
+\end{frame}
+
+% ========== 第126页 ==========
+\begin{frame}{Mapping between F and F̄}
+\(p:F\rightarrow \bar{F}\) , i.e., \(p(\mathbf{x}) = \bar{\mathbf{x}}\) \\
+\(p(F) = \{\bar{\mathbf{x}} = p(\mathbf{x}):\mathbf{x}\in F\}\) is a subset of \(\bar{F}\) \\
+\(\{f(\mathbf{x}):\mathbf{x}\in F\} = \{\bar{f} (\bar{\mathbf{x}}):\bar{\mathbf{x}}\in p(F)\}\) \\
+\(\min \{\bar{f} (\bar{\mathbf{y}}):\bar{\mathbf{y}}\in \bar{F}\} \leq \min \{f(\mathbf{y}):\mathbf{y}\in F\}\)
+\end{frame}
+
+% ========== 第127页 ==========
+\begin{frame}{Initial Matrix with Artificials}
+- Objective function: \(c_1x_1 + \ldots + c_nx_n + Mx_{n+1} + \ldots + Mx_{n+m}\) \\
+- Initial matrix:
+\[
+\begin{bmatrix}
+\mathbf{A} & \mathbf{I}_m & \mathbf{0} & \mathbf{b} \\
+-\mathbf{c}^T & \mathbf{0}^T & 1 & 0 \\
+\mathbf{0}^T & -\mathbf{1}^T & 0 & 0
+\end{bmatrix}
+\]
+- The \((m+1)\) -th row \(\longrightarrow c_1x_1 + \ldots + c_nx_n\) \\
+- The \((m+2)\) -th row \(\longrightarrow Mx_{n+1} + \ldots + Mx_{n+m}\)
+\end{frame}
+
+% ========== 第128页 ==========
+\begin{frame}{First Simplex Tableau}
+The 1st simplex tableau: row operations on the last row. \\
+\textit{[此处为第一张单纯形表，展示了将 M 项消去后的结果]}
+\end{frame}
+
+% ========== 第129页 ==========
+\begin{frame}{Reduced Costs with M}
+- In the tableau:
+\[
+\textit{[此处为带有 M 系数和常数系数的单纯形表]}
+\]
+- To use simplex procedure, force each
+\[
+z_{j} - c_{j} = a_{j}M + d_{j}\leq 0,\quad j = 1,\ldots ,n + m
+\]
+\end{frame}
+
+% ========== 第130页 ==========
+\begin{frame}{Simplex with Artificial Variables}
+For \(M \gg 0\) unspecified large: \\
+to force \(a_j \leq 0, \forall j\) \\
+to force \(d_j \leq 0, \forall j\) if \(a_j = 0\) \\
+Simple procedure involving artificial variables:
+\begin{enumerate}
+    \item On the last row: force all \(a_j^* \leq 0, j = 1, \ldots , m + n\) (by iteratively selecting the column with the largest number on the last row and pivoting)
+    \item On the last-but-one row: select \(\mathbf{A}^{(j)}\) with the largest positive entry over a 0 in the last row
+    \item Perform simplex procedure
+\end{enumerate}
+\end{frame}
+
+% ========== 第131页 ==========
+\begin{frame}{Infeasibility Detection}
+Suppose a tableau with optimal solution: \\
+If \(a_0^* > 0\) \\
+The admissible basis contains columns that correspond to artificial variables \\
+\(F = \emptyset\) : the problem is not feasible, because
+\[
+a_0^* M + d_0^* = \min \{\bar{f} (\bar{\mathbf{y}}):\bar{\mathbf{y}}\in \bar{F}\} \leq \min \{f(\mathbf{y}):\mathbf{y}\in F\}
+\]
+\end{frame}
+
+% ========== 第132页 ==========
+\begin{frame}{Optimal Solution with Artificials}
+Suppose a tableau with optimal solution: \\
+If \(a_0^* = 0\) \\
+The admissible basis contains columns that correspond to artificial variables \\
+\(\mathbf{x}\) is optimal solution to the original problem:
+\[
+f(\mathbf{x}) = \bar{f} (\bar{\mathbf{x}}) = \min \left\{\bar{f} (\bar{\mathbf{y}}):\bar{\mathbf{y}}\in \bar{F}\right\} \leq \min \left\{f(\mathbf{y}):\mathbf{y}\in F\right\}
+\]
+\end{frame}
+
+% ========== 第133页 ==========
+\begin{frame}{Example: Artificial Variables}
+\textbf{Question:}
+\[
+\min 2x_1 + x_2 + 3x_3
+\]
+subject to
+\begin{align*}
+x_1 - 2x_3 &= 2 \\
+x_1 + x_3 &= 1 \\
+x_2 + x_3 &= 1 \\
+\forall x_i &\geq 0
+\end{align*}
+The coefficient matrix contains \([0, 0, 1]^T\) of \(\mathbf{I}_3\). Only need 2 artificial variables.
+\end{frame}
+
+% ========== 第134页 ==========
+\begin{frame}{Example: Transformation}
+- Transformation:
+\[
+\min 2x_1 + x_2 + 3x_3 + Mx_4 + Mx_5
+\]
+subject to
+\begin{align*}
+x_1 - 2x_3 + x_4 &= 2 \\
+x_1 + x_3 + x_5 &= 1 \\
+x_2 + x_3 &= 1 \\
+\forall x_i &\geq 0
+\end{align*}
+\end{frame}
+
+% ========== 第135页 ==========
+\begin{frame}{Example: Initial Tableau}
+Initial matrix \& the 1st simplex tableau
+\[
+\begin{bmatrix}
+1 & 0 & -2 & 1 & 0 & 0 & 0 & 2 \\
+1 & 0 & 1 & 0 & 1 & 0 & 0 & 1 \\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+-2 & -1 & -3 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & -1 & -1 & 0 & 1 & 0
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(4)} + \mathbf{A}_{(3)}, \quad \mathbf{A}_{(5)} + (\mathbf{A}_{(1)} + \mathbf{A}_{(2)})
+\]
+\[
+\begin{bmatrix}
+1 & 0 & -2 & 1 & 0 & 0 & 0 & 2 \\
+1 & 0 & 1 & 0 & 1 & 0 & 0 & 1 \\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+-2 & -1 & -3 & 0 & 0 & 1 & 0 & 0 \\
+-2 & -1 & 2 & 0 & 0 & 0 & 1 & 3
+\end{bmatrix}
+\]
+\end{frame}
+
+% ========== 第136页 ==========
+\begin{frame}{Example: Infeasibility}
+\textit{[此处为上一页表格的后续初等行变换结果，最终解为} \(x^*=[0,0,1,2,0]^T\)\textit{]}
+\end{frame}
+
+% ========== 第137页 ==========
+\begin{frame}{Example: Another Artificial Problem}
+\textbf{Question:}
+\[
+\min 2x_1 + x_2 + x_3 + 3x_4
+\]
+subject to
+\begin{align*}
+-\frac{1}{3}x_1 + x_3 + x_4 &= 1 \\
+x_2 + x_3 &= 1 \\
+-x_1 + x_2 + x_3 &= 1 \\
+\forall x_i &\geq 0
+\end{align*}
+Artificial variables: \(x_5, x_6\)
+\end{frame}
+
+% ========== 第138页 ==========
+\begin{frame}{Example: Transformation}
+- Transformation:
+\[
+\min 2x_1 + x_2 + x_3 + 3x_4 + Mx_5 + Mx_6
+\]
+subject to
+\begin{align*}
+-\frac{1}{3}x_1 + x_3 + x_4 &= 1 \\
+x_2 + x_3 + x_5 &= 1 \\
+-x_1 + x_2 + x_3 + x_6 &= 1 \\
+\forall x_i &\geq 0
+\end{align*}
+\end{frame}
+
+% ========== 第139页 ==========
+\begin{frame}{Example: Initial Tableau}
+\textbf{Example 19}
+Admissible basis: \(\mathbf{A}^{(4)}, \mathbf{A}^{(5)}, \mathbf{A}^{(6)}\) \\
+Initial matrix \& the 1st simplex tableau:
+\[
+\begin{bmatrix}
+-\frac{1}{3} & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+-1 & 1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+-2 & -1 & -1 & -3 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & -1 & -1 & 0 & 1 & 0
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(4)} + 3\mathbf{A}_{(1)}, \quad \mathbf{A}_{(5)} + (\mathbf{A}_{(2)} + \mathbf{A}_{(3)})
+\]
+\[
+\begin{bmatrix}
+-\frac{1}{3} & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+-1 & 1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+-3 & -1 & 2 & 0 & 0 & 0 & 1 & 0 & 3 \\
+-1 & 2 & 2 & 0 & 0 & 0 & 0 & 1 & 2
+\end{bmatrix}
+\]
+\end{frame}
+
+% ========== 第140页 ==========
+\begin{frame}{Example: Pivot}
+\textbf{Example 19}
+the 1st simplex tableau \& the 2nd simplex tableau:
+\[
+\begin{bmatrix}
+-\frac{1}{3} & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+-1 & 1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+-3 & -1 & 2 & 0 & 0 & 0 & 1 & 0 & 3 \\
+-1 & 2 & 2 & 0 & 0 & 0 & 0 & 1 & 2
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(3)} - \mathbf{A}_{(2)}, \mathbf{A}_{(4)} + \mathbf{A}_{(2)}, \mathbf{A}_{(5)} - 2\mathbf{A}_{(2)}
+\]
+\[
+\begin{bmatrix}
+-\frac{1}{3} & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+-1 & 0 & 0 & 0 & -1 & 1 & 0 & 0 & 0 \\
+-3 & 0 & 3 & 0 & 1 & 0 & 1 & 0 & 4 \\
+-1 & 0 & 0 & 0 & -2 & 0 & 0 & 1 & 0
+\end{bmatrix}
+\]
+\end{frame}
+
+% ========== 第141页 ==========
+\begin{frame}{Example: Optimal Solution}
+\textbf{Example 19}
+the 2nd simplex tableau \& the 3rd simplex tableau (\(a_0^* = 0\)):
+\[
+\begin{bmatrix}
+-\frac{1}{3} & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+-1 & 0 & 0 & 0 & -1 & 1 & 0 & 0 & 0 \\
+-3 & 0 & 3 & 0 & 1 & 0 & 1 & 0 & 4 \\
+-1 & 0 & 0 & 0 & -2 & 0 & 0 & 1 & 0
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(1)} - \mathbf{A}_{(2)}, \quad \mathbf{A}_{(4)} - 3\mathbf{A}_{(2)}
+\]
+\[
+\begin{bmatrix}
+-\frac{1}{3} & -1 & 0 & 1 & -1 & 0 & 0 & 0 & 0 \\
+0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+-1 & 0 & 0 & 0 & -1 & 1 & 0 & 0 & 0 \\
+-3 & -3 & 0 & 0 & -2 & 0 & 1 & 0 & 1 \\
+-1 & 0 & 0 & 0 & -2 & 0 & 0 & 1 & 0
+\end{bmatrix}
+\]
+Basis contains column(s) w.r.t artificial variable(s) \\
+BFS: \([x_4, x_3, x_6]^T = [0, 1, 0]^T, [x_1, x_2, x_5]^T = [0, 0, 0]^T\) \\
+\(\mathbf{x} = [0, 0, 0, 1]^T\), the minimum is 1.
+\end{frame}
+
+% ========== 第142页 ==========
+\begin{frame}{Example: Artificial Variable}
+\textbf{Question:} \(\min 4x_1 + x_2 + x_3 + x_4\) \\
+subject to
+\begin{align*}
+x_1 + x_4 &= 4 \\
+x_1 + x_3 &= 5 \\
+x_1 + x_2 + x_4 &= 9 \\
+\forall x_i &\geq 0
+\end{align*}
+Artificial variables: \(x_5\)
+\end{frame}
+
+% ========== 第143页 ==========
+\begin{frame}{Example: Transformation}
+- Transformation:
+\[
+\min 4x_1 + x_2 + x_3 + x_4 + Mx_5
+\]
+subject to
+\begin{align*}
+x_1 + x_4 + x_5 &= 4 \\
+x_1 + x_3 &= 5 \\
+x_1 + x_2 + x_4 &= 9 \\
+\forall x_i &\geq 0
+\end{align*}
+\end{frame}
+
+% ========== 第144页 ==========
+\begin{frame}{Example: Initial Tableau}
+- Admissible basis: \(\mathbf{A}^{(3)}, \mathbf{A}^{(3)}, \mathbf{A}^{(2)}\) \\
+- Initial matrix \& the 1st simplex tableau:
+\[
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 1 & 0 & 0 & 4 \\
+1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+1 & 1 & 0 & 1 & 0 & 0 & 0 & 9 \\
+-4 & -1 & -1 & -1 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & -1 & 0 & 1 & 0
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(5)} + \mathbf{A}_{(1)}
+\]
+\[
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 1 & 0 & 0 & 4 \\
+1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+1 & 1 & 0 & 1 & 0 & 0 & 0 & 9 \\
+-4 & -1 & -1 & -1 & 0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 1 & 0 & 0 & 1 & 4
+\end{bmatrix}
+\]
+\end{frame}
+
+% ========== 第145页 ==========
+\begin{frame}{Example: Optimal Solution}
+\textbf{Example 20}
+the 1st simplex tableau \& the 2nd simplex tableau (\(a_0^* = 0\)):
+\[
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 1 & 0 & 0 & 4 \\
+1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+1 & 1 & 0 & 1 & 0 & 0 & 0 & 9 \\
+-4 & -1 & -1 & -1 & 0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 1 & 0 & 0 & 1 & 4
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(5)} - \mathbf{A}_{(1)}, \quad \mathbf{A}_{(3)} - \mathbf{A}_{(1)}
+\]
+\[
+\begin{bmatrix}
+1 & 0 & 0 & 1 & 1 & 0 & 0 & 4 \\
+1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+0 & 1 & 0 & 0 & -1 & 0 & 0 & 5 \\
+-2 & 0 & 0 & 0 & 0 & 1 & 0 & 14 \\
+0 & 0 & 0 & 0 & -1 & 0 & 1 & 0
+\end{bmatrix}
+\]
+Basis does not contain column w.r.t artificial variable \\
+BFS: \([x_4, x_3, x_2]^T = [4, 5, 5]^T, [x_1, x_5]^T = [0, 0]^T\) \\
+\(\mathbf{x} = [0, 5, 5, 4]^T\), the minimum is 14.
+\end{frame}
+
+% ========== 第146页 ==========
+\begin{frame}{Example: Mixed Constraints}
+\textbf{Question:}
+\[
+\min -x_1 - x_2 - 3x_3
+\]
+subject to
+\begin{align*}
+x_1 + x_2 + x_4 &= 2 \\
+x_2 + x_3 - x_4 &= 1 \\
+x_1 + x_2 + x_4 &\le 5
+\end{align*}
+Slack variables: \(x_4, x_5\) \\
+Artificial variables: \(x_6, x_7\)
+\end{frame}
+
+% ========== 第147页 ==========
+\begin{frame}{Example: Transformation}
+- Transformation:
+\[
+\min -x_{1} -x_{2} -3x_{3} + 0x_{4} + 0x_{5} + Mx_{6} + Mx_{7}
+\]
+subject to
+\begin{align*}
+x_1 + x_2 + x_6 &= 2 \\
+x_2 + x_3 - x_4 + x_7 &= 1 \\
+x_1 + x_2 + x_4 + x_5 &= 5 \\
+\forall x_i &\geq 0
+\end{align*}
+\end{frame}
+
+% ========== 第148页 ==========
+\begin{frame}{Example: Initial Tableau}
+\textbf{Example 21}
+Admissible basis: \(\mathbf{A}^{(6)}, \mathbf{A}^{(7)}, \mathbf{A}^{(5)}\) \\
+Initial matrix \& the 1st simplex tableau:
+\[
+\begin{bmatrix}
+1 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 2 \\
+0 & 1 & 1 & -1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+\hdashline 1 & 1 & 3 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & -1 & -1 & 0 & 1 & 0
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(5)} + (\mathbf{A}_{(1)} + \mathbf{A}_{(2)})
+\]
+\[
+\begin{bmatrix}
+1 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 2 \\
+0 & 1 & 1 & -1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+\hdashline 1 & 1 & 3 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+1 & 2 & 1 & -1 & 0 & 0 & 0 & 0 & 1 & 3
+\end{bmatrix}
+\]
+\end{frame}
+
+% ========== 第149页 ==========
+\begin{frame}{Example: Pivot}
+the 1st simplex tableau \& the 2nd simplex tableau:
+\[
+\begin{bmatrix}
+1 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 2 \\
+0 & 1 & 1 & -1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+\hdashline 1 & 1 & 3 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+1 & 2 & 1 & -1 & 0 & 0 & 0 & 0 & 1 & 3
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(1)} - \mathbf{A}_{(2)}, \quad \mathbf{A}_{(4)} - \mathbf{A}_{(2)}, \quad \mathbf{A}_{(5)} - 2\mathbf{A}_{(2)}
+\]
+\[
+\begin{bmatrix}
+1 & 0 & -1 & 1 & 0 & 1 & -1 & 0 & 0 & 1 \\
+0 & 1 & 1 & -1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+\hdashline 1 & 0 & -1 & 1 & 0 & 0 & -2 & 0 & 1 & 1 \\
+1 & 0 & -1 & 1 & 0 & 0 & -2 & 0 & 1 & 1
+\end{bmatrix}
+\]
+\end{frame}
+
+% ========== 第150页 ==========
+\begin{frame}{Example: Further Pivoting}
+the 2nd simplex tableau \& the 3rd simplex tableau (\(a_0^* = 0\)):
+\[
+\begin{bmatrix}
+1 & 0 & -1 & 1 & 0 & 1 & -1 & 0 & 0 & 1 \\
+0 & 1 & 1 & -1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 5 \\
+\hdashline 1 & 0 & -1 & 1 & 0 & 0 & -2 & 0 & 1 & 1 \\
+1 & 0 & -1 & 1 & 0 & 0 & -2 & 0 & 1 & 1
+\end{bmatrix}
+\]
+Row operations:
+\[
+\mathbf{A}_{(2)} + \mathbf{A}_{(1)}, \quad \mathbf{A}_{(4)} - \mathbf{A}_{(1)}, \quad \mathbf{A}_{(5)} - \mathbf{A}_{(1)}
+\]
+\textit{[此处最终单纯形表被截断，无法完整展示]}
+\end{frame}
+
+% ========== 第151页 ==========
+\begin{frame}{Example: Optimal Solution}
+\textit{[第151页内容为无效数据/空白页，已跳过]}
+\end{frame}
+
+% ========== 第152页 ==========
+\begin{frame}{Dual LP Problem}
+\textbf{Dual Linear Programming Problems} \\
+Primal problem:
+\[
+\min \quad \mathbf{c}^T \mathbf{x}
+\]
+subject to
+\[
+\begin{array}{rcl} \mathbf{A}\mathbf{x} & = & \mathbf{b} \\ \mathbf{x} & \geq & \mathbf{0} \end{array}
+\]
+Dual problem:
+\[
+\max \quad \mathbf{b}^T \mathbf{w}
+\]
+subject to
+\[
+\mathbf{A}^T \mathbf{w} \leq \mathbf{c}
+\]
+\end{frame}
+
+% ========== 第153页 ==========
+\begin{frame}{Weak and Strong Duality}
+\textbf{Weak Duality Theorem} \\
+If \(\mathbf{x}\) and \(\mathbf{w}\) are feasible solutions of the primal and dual problems, then \(\mathbf{b}^T\mathbf{w}\leq \mathbf{c}^T\mathbf{x}\) \\
+\textbf{Strong Duality Theorem} \\
+If \(\bar{\mathbf{x}}\) and \(\bar{\mathbf{w}}\) are feasible solutions of the primal and dual problems, and \(\mathbf{b}^T\mathbf{w} = \mathbf{c}^T\mathbf{x}\) , then \\
+- \(\bar{\mathbf{x}}\) and \(\bar{\mathbf{w}}\) solve their respective problems \\
+- The optimal values of the primal and the dual objective functions are equal:
+\[
+\begin{array}{rcl}{\mathbf{c}^T\mathbf{\bar{x}}}&{=}&{\min \mathbf{c}^T\mathbf{x}}\\{}&{}&{}\\{}&{=}&{\max \mathbf{b}^T\mathbf{w}}\\{}&{}&{}\\{}&{=}&{\mathbf{b}^T\mathbf{\bar{w}}}\end{array}
+\]
+\end{frame}
+
+% ========== 第154页 ==========
+\begin{frame}{Fundamental Duality Theorem}
+\textbf{Fundamental Duality Theorem} \\
+- If either the primal/dual problem has a finite optimal solution, then the dual/primal problem has a finite optimal solution as well \\
+Moreover,
+\[
+\min \left\{\mathbf{c}^T\mathbf{x}:\mathbf{A}\mathbf{x} = \mathbf{b},\mathbf{x}\geq \mathbf{0}\right\} = \max \left\{\mathbf{b}^T\mathbf{w}:\mathbf{A}^T\mathbf{w}\leq \mathbf{c}\right\}
+\]
+\end{frame}
+
+% ========== 第155页 ==========
+\begin{frame}{Proof of Duality (x→w)}
+\textbf{Proof (x \(\rightarrow\) w):} \\
+- Assume the BFS \(x_B = \mathbf{B}^{-1}\mathbf{b}\) and \(x_D = \mathbf{0}^T\) , the final simplex tableau is
+\[
+\left[ \begin{array}{ccc}\mathbf{I}_m & \mathbf{B}^{-1}\mathbf{D} & 0 & \mathbf{B}^{-1}\mathbf{b} \\ \mathbf{0}^T & \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{D} -\mathbf{c}_D^T & 1 & \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{b} \end{array} \right]
+\]
+\[
+\mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{D} - \mathbf{c}_D^T\leq 0^T,z_o = \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{b},\left[\mathbf{I}_m\mathbf{B}^{-1}\mathbf{D}\right] = \mathbf{B}^{-1}\mathbf{A}
+\]
+- Define \(\mathbf{w} = \left(\mathbf{c}_B^T\mathbf{B}^{-1}\right)^T \in \mathbf{R}_{n \times 1}\)
+\[
+\mathbf{A}^T\mathbf{w} = \mathbf{A}^T \left(\mathbf{c}_B^T\mathbf{B}^{-1}\right)^T = \left(\mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{A}\right)^T = \left(\mathbf{c}_B^T \left[\mathbf{I}_m \mathbf{B}^{-1}\mathbf{D}\right]\right)^T = \left[\mathbf{c}_B^T \mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{D}\right]^T \leq \left[\mathbf{c}_B^T \mathbf{c}_D^T\right]^T = \mathbf{c}
+\]
+- Thus, \(\mathbf{w}\) is a feasible solution of the dual problem
+\[
+\mathbf{b}^T\mathbf{w} = \mathbf{b}^T \left(\mathbf{c}_B^T\mathbf{B}^{-1}\right)^T = \left(\mathbf{c}_B^T\mathbf{B}^{-1}\mathbf{b}\right)^T = z_o^T = z_o
+\]
+\end{frame}
+
+% ========== 第156页 ==========
+\begin{frame}{Proof of Duality (w→x)}
+\textbf{Proof (w \(\rightarrow\) x):} \\
+Denote \(\mathbf{w} = \mathbf{w}_{1} - \mathbf{w}_{2}\) , and slack variables \(\mathbf{w}_{3} \geq 0\) \\
+Reformulation of the dual problem:
+\[
+-\min \quad -\mathbf{b}^{T}\mathbf{w}_{1} + \mathbf{b}^{T}\mathbf{w}_{2} + \mathbf{0}^{T}\mathbf{w}_{3}
+\]
+subject to
+\[
+\mathbf{A}^{T}\mathbf{w}_{1} - \mathbf{A}^{T}\mathbf{w}_{2} + \mathbf{I}\mathbf{w}_{3} = \mathbf{c}^{T}, \quad \mathbf{w}_{1}\geq 0,\mathbf{w}_{2}\geq 0,\mathbf{w}_{3}\geq 0
+\]
+\[
+\Downarrow
+\]
+\[
+-\mathbf{A}^{T}\mathbf{w}_{1} + \mathbf{A}^{T}\mathbf{w}_{2} - \mathbf{I}\mathbf{w}_{3} = -\mathbf{c}^{T}, \quad \mathbf{w}_{1}\geq 0,\mathbf{w}_{2}\geq 0,\mathbf{w}_{3}\geq 0
+\]
+\end{frame}
+
+% ========== 第157页 ==========
+\begin{frame}{Dual of Dual}
+\textbf{Proof (w \(\rightarrow\) x):} \\
+The dual problem of the above:
+\[
+\min \quad [-\mathbf{b} \quad \mathbf{b} \quad \mathbf{0}] \mathbf{x}
+\]
+subject to
+\[
+\left[-\mathbf{A}^{T}\quad \mathbf{A}^{T}\quad -\mathbf{I}\right]\mathbf{x} \leq \left[-\mathbf{c}\right]
+\]
+\[
+\mathbf{A}\mathbf{x} = \mathbf{b},\mathbf{x}\geq \mathbf{0}
+\]
+\end{frame}
+
+% ========== 第158页 ==========
+\begin{frame}{Example: Primal-Dual}
+\textbf{Question:}
+\[
+\min \quad x_1 + x_2 + x_3 + x_4 + x_5 + x_6
+\]
+subject to
+\begin{align*}
+16x_1 + 2x_2 + x_5 + 10x_6 &= 4 \\
+-x_1 + x_4 + x_6 &= 0 \\
+5x_1 + 4x_2 + x_3 &= 8 \\
+\forall x_i &\geq 0
+\end{align*}
+\end{frame}
+
+% ========== 第159页 ==========
+\begin{frame}{Example: Dual Formulation}
+- The dual problem:
+\[
+\max \quad 4w_1 + 0w_2 + 8w_3
+\]
+subject to
+\begin{array}{rcl} 16w_1 - w_2 + 5w_3 & \leq & 1 \\ 2w_1 + 4w_3 & \leq & 1 \\ w_3 & \leq & 1 \\ w_2 & \leq & 1 \\ w_1 & \leq & 1 \\ 10w_1 + w_2 & \leq & 1 \end{array}
+\end{frame}
+
+% ========== 第160页 ==========
+\begin{frame}{Example: Solving Dual}
+- The initial simplex tableau:
+\[
+\begin{bmatrix}
+16 & 2 & 0 & 0 & 1 & 10 & 0 & 4 \\
+-1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+5 & 4 & 1 & 0 & 0 & 0 & 0 & 8 \\
+19 & 5 & 0 & 0 & 0 & 10 & 1 & 12
+\end{bmatrix}
+\]
+- The final tableau:
+\[
+\begin{bmatrix}
+8 & 1 & 0 & 0 & 12 & 5 & 0 & 2 \\
+1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\
+-27 & 0 & 1 & 0 & -2 & -20 & 0 & 0 \\
+-21 & 0 & 0 & 0 & -5/2 & -15 & 1 & 2
+\end{bmatrix}
+\]
+- \(w^T = c_B^T B^{-1} = c_B^T B^{-1} D - c_D^T + c_D^T\), if \(D = I\) \\
+\(w_1 = -5/2 + 1 = -3/2, \quad w_2 = 0 + 1 = 1, \quad w_3 = 0 + 1 = 1\) \\
+- The optimal value of the cost function is 2.
+\end{frame}
+
+\end{document}
